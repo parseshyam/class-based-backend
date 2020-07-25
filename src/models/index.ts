@@ -1,4 +1,3 @@
-import { sequelize } from '../configs/db.config'
 import { User } from './user.model';
 import { Group } from './group.model';
 import { GroupMember } from './group_member.model';
@@ -13,15 +12,14 @@ User.hasMany(GroupMember, { foreignKey: 'user_id' })
 Group.hasMany(GroupMessage, { foreignKey: 'group_id' })
 Group.hasMany(GroupMember, { foreignKey: 'group_id' });
 
-User.sync({ force: false });
-Group.sync({ force: false });
-GroupMember.sync({ force: false });
-GroupMessage.sync({ force: false });
-PrivateMessage.sync({ force: false });
+// !!WARNING THE FORCE -> TRUE WILL DELETE THE WHOLE TABLE.
+// (async () => {
+//     await User.sync({ force: false })
+//     await Group.sync({ force: false })
+//     await GroupMember.sync({ force: false })
+//     await GroupMessage.sync({ force: false })
+//     await PrivateMessage.sync({ force: false })
+// })();
 
-sequelize.sync({ force: false });
-sequelize.authenticate()
-    .then(() => console.log('connected successfully'))
-    .catch(error => console.log(error))
 
 

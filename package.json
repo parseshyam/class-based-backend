@@ -23,6 +23,7 @@
     "@types/cors": "^2.8.6",
     "@types/node": "^14.0.26",
     "@types/spdy": "^3.4.4",
+    "@types/validator": "^13.1.0",
     "nodemon": "^2.0.4",
     "rimraf": "^3.0.2",
     "ts-node": "^8.10.2",

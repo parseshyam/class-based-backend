@@ -43,7 +43,7 @@ export const User = sequelize.define('user', {
         allowNull: false
     },
     role: {
-        type: ENUM("ADMIN", "STAFF"),
+        type: ENUM("USER","ADMIN", "STAFF"),
         defaultValue: "USER"
     }
 }, {
