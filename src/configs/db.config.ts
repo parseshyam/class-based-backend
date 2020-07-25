@@ -3,7 +3,7 @@ import { db } from '../utils/constants';
 
 export const sequelize = new Sequelize(db.DB_NAME, db.DB_USER_NAME, db.DB_PASSWORD, {
     host: db.DB_HOST_NAME,
-    port: 5432,
+    port: +db.DB_PORT,
     dialect: 'postgres',
     dialectOptions: {
         useUTC: false
