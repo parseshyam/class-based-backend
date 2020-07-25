@@ -1,7 +1,8 @@
 import app from './app'
 import spdy from 'spdy';
-import fs from 'fs'
-import IO from 'socket.io'
+import fs from 'fs';
+import IO from 'socket.io';
+import logger from './services/logger';
 import { config } from 'dotenv';
 config();
 
@@ -15,7 +16,7 @@ let server = spdy.createServer({
 export const io = IO(server); // set up socket.io and bind it to our http server.
 
 server.listen(PORT, () => {
-    console.log(`SERVER IS UP ON PORT ${PORT}`)
+    logger.info(`Http2 server is up and running on port -> ${PORT}`);
 });
 
-require('./services/socket.service').socketInit(io);
+require('./services/socket.service').socketInit(io, PORT);
