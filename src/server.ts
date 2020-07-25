@@ -1,6 +1,7 @@
 import app from './app'
 import spdy from 'spdy';
 import fs from 'fs'
+import IO from 'socket.io'
 import { config } from 'dotenv';
 config();
 
@@ -15,3 +16,4 @@ server.listen(PORT, () => {
     console.log(`SERVER IS UP ON PORT ${PORT}`)
 });
 
+export const io = IO(server); // set up socket.io and bind it to our http server.

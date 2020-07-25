@@ -4,6 +4,7 @@ import { UserRoutes } from './routes/user.routes';
 
 class App {
     public app: express.Application;
+    // all the routes goes here.
     public user: UserRoutes = new UserRoutes()
     constructor() {
         this.app = express.default();
