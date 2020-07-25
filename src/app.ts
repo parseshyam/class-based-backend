@@ -12,6 +12,7 @@ class App {
         this.initializeDB();
         this.initilizeMiddleware();
         this.user.routes(this.app);
+        this.errorHandler();
     }
     private initilizeMiddleware = () => {
         this.app.use(express.json());
@@ -27,6 +28,15 @@ class App {
         } catch (error) {
             console.log(error)
         }
+    }
+    private errorHandler = () => {
+        this.app.use((req, res, next) => {
+            res.status(404).json({
+                status: false,
+                message: `${req.originalUrl} not found.`,
+                value: {}
+            })
+        })
     }
 }
 
