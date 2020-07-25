@@ -32,5 +32,22 @@ export default {
             req['user'] = null;
             next();
         }
-    }
+    },
+
+    success: (res: Response, message: string, data: object, status: boolean, statusCode: number) => {
+        return res.status(statusCode || 200).json({
+            status: status || true,
+            message: message || "",
+            value: data || {}
+        })
+    },
+
+    failed: (res: Response, message: string, data: object, status: boolean, statusCode: number) => {
+        return res.status(statusCode || 500).json({
+            status: status || false,
+            message: message || "",
+            value: data || {}
+        })
+    },
+
 }
