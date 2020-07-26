@@ -13,6 +13,6 @@ export class UserRoutes extends Middlewares {
             .delete() // Delete.
 
         app.route('/user/register')
-            .post(valid.registerSchema, this.valid,this.Auth, this.userController.register);
+            .post(valid.registerSchema, this.valid, this.Auth, this.userController.register);
     }
 }

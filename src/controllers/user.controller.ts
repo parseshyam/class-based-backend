@@ -6,7 +6,8 @@ export class UserController extends Responses {
     public register = async (req: Request, res: Response, next: NextFunction) => {
         try {
             console.log("inside the final controller")
-            this.success(res, "", req.body)
+            // @ts-ignore
+            this.success(res, "", { ...req.body, user: req.user })
         } catch (error) {
             next(error);
         }

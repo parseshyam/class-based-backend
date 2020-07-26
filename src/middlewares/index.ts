@@ -10,17 +10,13 @@ export class Middlewares extends Responses {
 
     public valid = (req: Request, res: Response, next: NextFunction) => {
         try {
-            console.log("inside validator middleware.")
             const errors = validationResult(req);
-            if (errors.isEmpty()) {
-                return next();
-            }
+            if (errors.isEmpty()) return next();
             const error: any = new Error('Validation error.');
             error.statusCode = 200;
             error.data = errors.array()
             next(error)
         } catch (error) {
-            console.log(error)
             next(error)
         }
     }
@@ -35,11 +31,16 @@ export class Middlewares extends Responses {
             req['user'] = decode;
             next();
         } catch (error) {
-            error.statusCode = 401;
             // // console.log(error);
-            // // @ts-ignore
-            // req['user'] = null;
-            next(error);
+            let allowAccessToUnauthorizedUser = false;
+            if (allowAccessToUnauthorizedUser) {
+                // @ts-ignore
+                req['user'] = null;
+                next();
+            } else {
+                error.statusCode = 401;
+                next(error);
+            }
         }
     }
 }
