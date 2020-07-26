@@ -8,6 +8,6 @@ export const sequelize = new Sequelize(db.DB_NAME, db.DB_USER_NAME, db.DB_PASSWO
     dialectOptions: {
         useUTC: false
     },
-    timezone: '+05:30'
+    timezone: db.TIME_ZONE
 });
 
