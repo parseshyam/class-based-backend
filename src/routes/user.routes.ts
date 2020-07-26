@@ -1,15 +1,18 @@
-import { Application, Request, Response } from 'express';
+import { Application } from 'express';
 import { UserController } from '../controllers/user.controller';
-import validation from '../validators/user.schema';
-
-export class UserRoutes {
+import { Middlewares } from '../middlewares';
+import valid from '../validators/user.schema'
+export class UserRoutes extends Middlewares {
     public userController: UserController = new UserController()
-    constructor() { }
+    constructor() { super() }
     public routes = (app: Application) => {
-        app.route('/users')
-            .get(validation.loginSchema, this.userController.getUser) // Read.
+        app.route('/user')
+            .get(this.valid, this.userController.getUser) // Read.
             .post() // Create.
             .patch() // Update.
             .delete() // Delete.
+
+        app.route('/user/register')
+            .post(valid.registerSchema, this.valid,this.Auth, this.userController.register);
     }
 }

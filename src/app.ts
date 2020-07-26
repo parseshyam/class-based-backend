@@ -3,7 +3,6 @@ import cors from 'cors';
 import { UserRoutes } from './routes/user.routes';
 import { sequelize } from './configs/db.config'
 import logger from './services/logger';
-import { responses } from './utils/helper.functions'
 class App {
     public app: express.Application;
     // all the routes goes here.
@@ -30,7 +29,19 @@ class App {
     }
 
     private errorHandler = () => {
-        this.app.use((req, res, next) => responses.failed(res, `${req.originalUrl} not found`))
+        this.app.use((req, res, next) => {
+            const error: any = new Error('URL NOT FOUND');
+            error.statusCode = 404;
+            error.data = {}
+            next(error);
+        });
+        this.app.use((error: any, req: any, res: any, next: any) => {
+            return res.status(error.statusCode || 500).json({
+                status: false,
+                message: error.message,
+                value: error.data || {}
+            })
+        });
     }
 }
 

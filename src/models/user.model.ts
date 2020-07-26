@@ -40,7 +40,7 @@ export const User = sequelize.define('user', {
     },
     socket_id: {
         type: STRING,
-        allowNull: false
+        defaultValue: null
     },
     role: {
         type: ENUM("USER","ADMIN", "STAFF"),

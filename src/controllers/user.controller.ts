@@ -1,16 +1,21 @@
-import { Request, Response } from 'express';
+import { Request, Response, NextFunction } from 'express';
+import { Responses } from '../utils/Responses';
 import { User } from '../models/user.model';
-import { validationResult } from 'express-validator'
-export class UserController {
+export class UserController extends Responses {
 
-    constructor() { }
-
-    public getUser = async (req: Request, res: Response) => {
+    public register = async (req: Request, res: Response, next: NextFunction) => {
         try {
-            validationResult(req).throw();
+            console.log("inside the final controller")
+            this.success(res, "", req.body)
+        } catch (error) {
+            next(error);
+        }
+    }
+    public getUser = async (req: Request, res: Response, next: NextFunction) => {
+        try {
             res.status(200).json(req.body)
-        } catch (e) {
-            res.status(500).json({ ...e });
+        } catch (error) {
+            next(error);
         }
     }
 }
