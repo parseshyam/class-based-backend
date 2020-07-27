@@ -12,7 +12,7 @@ export class Middlewares extends Responses {
         try {
             const errors = validationResult(req);
             if (errors.isEmpty()) return next();
-            const error: any = new Error('Validation error.');
+            const error: any = new Error('validation error.');
             error.statusCode = 200;
             error.data = errors.array()
             next(error)
@@ -31,16 +31,8 @@ export class Middlewares extends Responses {
             req['user'] = decode;
             next();
         } catch (error) {
-            // // console.log(error);
-            let allowAccessToUnauthorizedUser = true;
-            if (allowAccessToUnauthorizedUser) {
-                // @ts-ignore
-                req['user'] = null;
-                next();
-            } else {
-                error.statusCode = 401;
-                next(error);
-            }
+            error.statusCode = 401
+            next(error)
         }
     }
 }

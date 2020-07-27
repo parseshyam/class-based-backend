@@ -24,6 +24,7 @@ class App {
     // initilize the db instance
     private initializeDB = async () => {
         import('./models')
+            // .then(_ => sequelize.sync({ force: false }))
             .then(_ => sequelize.authenticate())
             .then(_ => logger.info('DB Connected successfully.'))
             .catch(error => logger.error(error.message))

@@ -14,38 +14,25 @@ export const User = sequelize.define('user', {
         unique: true,
         allowNull: false,
     },
-    enroll: {
-        type: BIGINT,
-        unique: true,
-        allowNull: false
-    },
-    phone_number: {
-        type: BIGINT,
+    user_name: {
+        type: STRING,
         allowNull: false
     },
     password: {
         type: STRING,
-        allowNull: false
-    },
-    profile_picture: {
-        type: TEXT,
-        defaultValue: null
-    },
-    is_blocked: {
-        type: BOOLEAN,
-        defaultValue: false
-    },
-    associated_groups: {
-        type: ARRAY(INTEGER),
-        defaultValue: null
+        allowNull: true
     },
     socket_id: {
         type: STRING,
         defaultValue: null
     },
-    role: {
-        type: ENUM("USER","ADMIN", "STAFF"),
-        defaultValue: "USER"
+    verify_code: {
+        type: INTEGER,
+        defaultValue: null
+    },
+    two_step_auth: {
+        type: BOOLEAN,
+        defaultValue: true
     }
 }, {
 
