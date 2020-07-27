@@ -15,7 +15,7 @@ export const User = sequelize.define('user', {
         allowNull: false,
     },
     enroll: {
-        type: INTEGER,
+        type: BIGINT,
         unique: true,
         allowNull: false
     },
@@ -36,7 +36,8 @@ export const User = sequelize.define('user', {
         defaultValue: false
     },
     associated_groups: {
-        type: ARRAY(INTEGER)
+        type: ARRAY(INTEGER),
+        defaultValue: null
     },
     socket_id: {
         type: STRING,

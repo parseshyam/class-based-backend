@@ -32,7 +32,7 @@ export class Middlewares extends Responses {
             next();
         } catch (error) {
             // // console.log(error);
-            let allowAccessToUnauthorizedUser = false;
+            let allowAccessToUnauthorizedUser = true;
             if (allowAccessToUnauthorizedUser) {
                 // @ts-ignore
                 req['user'] = null;

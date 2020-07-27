@@ -36,9 +36,13 @@ class App {
             next(error);
         });
         this.app.use((error: any, req: any, res: any, next: any) => {
+            if (error?.original) {
+                error.message = error.original.detail;
+                error.data = error?.errors?.length > 0 ? error.errors.filter((e: any) => delete e.instance) : []
+            }
             return res.status(error.statusCode || 500).json({
                 status: false,
-                message: error.message,
+                message: error.message || "",
                 value: error.data || {}
             })
         });
