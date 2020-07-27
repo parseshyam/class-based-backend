@@ -5,7 +5,7 @@ import { hash, compare } from 'bcrypt'
 import { generate_tokens } from '../utils/helper.functions';
 export class UserController extends Responses {
 
-    public register = async (req: Request, res: Response, next: NextFunction) => {
+    public createUser = async (req: Request, res: Response, next: NextFunction) => {
         try {
             let { password, email } = req.body;
             let foundUser: any = await User.findOne({ where: { email } });
@@ -18,7 +18,7 @@ export class UserController extends Responses {
                     delete foundUser.dataValues.password;
                     delete foundUser.dataValues.socket_id;
                     let tokens = generate_tokens(foundUser.dataValues);
-                    return this.success(res, { foundUser, auth: tokens }, "", 200);
+                    return this.success(res, { user: foundUser, auth: tokens }, "", 200);
                 }
             }
             let hashedPass = await hash(password, 10);
@@ -44,12 +44,12 @@ export class UserController extends Responses {
             if (!foundUser.dataValues.verify_code)
                 return this.success(res, {}, "already verified.")
             if (foundUser.dataValues.verify_code !== req.body.verification_code)
-                return this.failed(res, {}, "wrong verification code.", 200);
+                return this.failed(res, {}, "wrong verification code", 200);
             // @ts-ignore
             await User.update({ verify_code: null }, { where: { id: req.user.id } })
             delete foundUser.dataValues.password;
             delete foundUser.dataValues.socket_id;
-            return this.success(res, foundUser, "user verified successfully");
+            return this.success(res, { user: foundUser }, "user verified successfully");
         } catch (error) {
             next(error);
         }
@@ -57,9 +57,19 @@ export class UserController extends Responses {
 
     public getUser = async (req: Request, res: Response, next: NextFunction) => {
         try {
-            res.status(200).json(req.body)
+            // @ts-ignore
+            let foundUser: any = await User.findOne({ where: { id: req.user.id } });
+            if (!foundUser) return this.failed(res, {}, "user not found");
+            delete foundUser.dataValues.password;
+            delete foundUser.dataValues.socket_id;
+            delete foundUser.dataValues.verify_code;
+            return this.success(res, { user: foundUser }, "user found");
         } catch (error) {
             next(error);
         }
+    }
+
+    public updateUser = async (req: Request, res: Response, next: NextFunction) => {
+        return this.success(res, { ...req.body });
     }
 }
