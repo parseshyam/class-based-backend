@@ -1,16 +1,16 @@
 import { sign } from 'jsonwebtoken';
 import constants from './constants';
-let { ACCESS_TOKEN, REFRESH_TOKEN } = constants;
+let TOKEN = constants;
 
-export const generate_tokens = (user: any): object => {
+export const generate_tokens = (user: object): object => {
     try {
-        let accessToken = sign(user, ACCESS_TOKEN, { expiresIn: '1d' });
-        let refreshToken = sign(user, REFRESH_TOKEN, { expiresIn: '30d' });
+        let accessToken = sign(user, TOKEN.ACCESS_TOKEN, { expiresIn: TOKEN.ACCESS_EXP });
+        let refreshToken = sign(user, TOKEN.REFRESH_TOKEN, { expiresIn: TOKEN.REFRESH_EXP });
         return {
             accessToken,
             refreshToken,
-            token_type: 'Bearer',
-            expiresIn: '1d'
+            token_type: TOKEN.TYPE,
+            expiresIn: TOKEN.ACCESS_EXP
         };
     } catch (error) {
         console.log(error)

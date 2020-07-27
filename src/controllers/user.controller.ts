@@ -9,11 +9,12 @@ export class UserController extends Responses {
         try {
             let { password } = req.body;
             let hashedPass = await hash(password, 10);
-            console.log("inside the final controller")
             let user: any = await User.create({ ...req.body, password: hashedPass });
-            delete user.password;
-            // @ts-ignore
-            this.success(res, user, "user registered.")
+            delete user.dataValues.password;
+            delete user.dataValues.phone_number;
+            delete user.dataValues.socket_id;
+            let tokens = generate_tokens(user.dataValues);
+            this.success(res, { user, auth: tokens }, "", 200);
         } catch (error) {
             // console.log(error)
             next(error);
