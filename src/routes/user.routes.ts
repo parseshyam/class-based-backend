@@ -12,11 +12,13 @@ export class UserRoutes extends Middlewares {
             .patch(valid.updateUser, this.valid, this.Auth, this.userController.updateUser) // Update.
             .delete() // Delete.
 
-        app.route('/user/register')
-            .post(valid.createUser, this.valid, this.userController.createUser);
+        app.route('/user/login')
+            .post(valid.loginSchema, this.valid, this.userController.login);
 
         app.route('/user/code-verification')
             .post(valid.codeVerification, this.valid, this.Auth, this.userController.codeVerify)
 
+        app.route('/user/forgot-password/:userId?')
+            .post(valid.forgotPassword, this.valid, this.userController.forgotPass)
     }
 }

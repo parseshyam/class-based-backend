@@ -4,7 +4,7 @@ import { SocialAuth } from './social_auth.model'
 
 User.hasMany(PrivateMessage, { foreignKey: 'sender_id' });
 User.hasMany(PrivateMessage, { foreignKey: 'receiver_id' });
-User.hasMany(SocialAuth, { foreignKey: 'userId', onDelete: 'CASCADE' });
+User.hasMany(SocialAuth, { foreignKey: 'userId' });
 
 // !!WARNING THE FORCE -> TRUE WILL DELETE THE WHOLE TABLE.
 // (async () => {

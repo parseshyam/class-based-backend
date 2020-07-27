@@ -24,9 +24,14 @@ const codeVerification = [
     body('verification_code').trim().escape().isNumeric().isLength({ min: 5, max: 5 }).toInt(),
 ]
 
+const forgotPassword = [
+    body('email').trim().escape().isEmail().normalizeEmail(),
+]
+
 export default {
     loginSchema,
     createUser,
     updateUser,
+    forgotPassword,
     codeVerification
 }

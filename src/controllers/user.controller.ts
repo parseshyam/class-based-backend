@@ -10,11 +10,8 @@ export class UserController extends Responses {
             let { password, email } = req.body;
             let foundUser: any = await User.findOne({ where: { email } });
             if (foundUser) {
-                if (!foundUser.dataValues.verify_code) {
-                    let error: any = new Error('already registered');
-                    error.status = 400;
-                    return next(error)
-                } else {
+                if (!foundUser.dataValues.verify_code) return this.failed(res, {}, "already registered", 200)
+                else {
                     delete foundUser.dataValues.password;
                     delete foundUser.dataValues.socket_id;
                     let tokens = generate_tokens(foundUser.dataValues);
@@ -35,6 +32,29 @@ export class UserController extends Responses {
             return next(error);
         }
     }
+
+    public getUser = async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            // @ts-ignore
+            let foundUser: any = await User.findOne({ where: { id: req.user.id } });
+            if (!foundUser) return this.failed(res, {}, "user not found");
+            delete foundUser.dataValues.password;
+            delete foundUser.dataValues.socket_id;
+            delete foundUser.dataValues.verify_code;
+            return this.success(res, { user: foundUser }, "user found");
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    public updateUser = async (req: Request, res: Response, next: NextFunction) => {
+        return this.success(res, { ...req.body });
+    }
+
+    public deleteUser = async (req: Request, res: Response, next: NextFunction) => {
+        return this.success(res, { ...req.body });
+    }
+
     public codeVerify = async (req: Request, res: Response, next: NextFunction) => {
         try {
             // @ts-ignore
@@ -55,21 +75,38 @@ export class UserController extends Responses {
         }
     }
 
-    public getUser = async (req: Request, res: Response, next: NextFunction) => {
+    public login = async (req: Request, res: Response, next: NextFunction) => {
+        let { email, password } = req.body
         try {
-            // @ts-ignore
-            let foundUser: any = await User.findOne({ where: { id: req.user.id } });
+            let foundUser: any = await User.findOne({ where: { email } });
             if (!foundUser) return this.failed(res, {}, "user not found");
+            let checkPass = await compare(password, foundUser.dataValues.password);
+            if (!checkPass) return this.failed(res, {}, "wrong password", 200);
+            if (foundUser.dataValues.two_step_auth) {
+                let verify_code = Math.floor(10000 + Math.random() * 90000);
+                return this.success(res, { verify: true, code: verify_code }, "user found");
+            }
             delete foundUser.dataValues.password;
             delete foundUser.dataValues.socket_id;
             delete foundUser.dataValues.verify_code;
-            return this.success(res, { user: foundUser }, "user found");
+            return this.success(res, { verify: false, code: null }, "user found");
         } catch (error) {
-            next(error);
+            return next(error)
         }
     }
 
-    public updateUser = async (req: Request, res: Response, next: NextFunction) => {
-        return this.success(res, { ...req.body });
+    public forgotPass = async (req: Request, res: Response, next: NextFunction) => {
+        let { email } = req.body;
+        console.log(req.params);
+        try {
+            let foundUser: any = await User.findOne({ where: { email } });
+            if (!foundUser) return this.failed(res, {}, "user not found");
+            let verify_code = Math.floor(10000 + Math.random() * 90000);
+            delete foundUser.dataValues.password;
+            delete foundUser.dataValues.socket_id;
+            return this.success(res, { verify: true, code: verify_code }, "user found");
+        } catch (error) {
+            return next(error)
+        }
     }
 }
