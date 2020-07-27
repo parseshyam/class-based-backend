@@ -1,12 +1,11 @@
-import { body, header } from 'express-validator';
-import { User } from '../models/user.model'
+import { body, param } from 'express-validator';
 // alawys sanitizatize the input use trim and escape every for each input 
 const createUser = [
     body('first_name').trim().escape().isAlpha(),
     body('last_name').trim().escape().isAlpha(),
     body('email').trim().escape().isEmail().normalizeEmail(),
     body('user_name').trim().escape().isAlphanumeric(),
-    body('password').trim().isLength({ max: 10, min: 5 }),
+    body('password').trim().isLength({ max: 10, min: 5 }).withMessage('max 10 min 5'),
 ]
 
 const updateUser = [
@@ -17,7 +16,7 @@ const updateUser = [
 
 const loginSchema = [
     body('email').trim().escape().isEmail().normalizeEmail(),
-    body('password').trim().isLength({ max: 10, min: 5 }),
+    body('password').trim().isLength({ max: 10, min: 5 }).withMessage('max 10 min 5'),
 ]
 
 const codeVerification = [
@@ -27,8 +26,17 @@ const codeVerification = [
 const forgotPassword = [
     body('email').trim().escape().isEmail().normalizeEmail(),
 ]
+const resetPass = [
+    param('token').trim().isJWT(),
+    body('passwordConfirmation').trim().isLength({ max: 10, min: 5 }).withMessage('max 10 min 5'),
+    body('password').trim().isLength({ max: 10, min: 5 }).withMessage('max 10 min 5').custom((val, { req, }) => {
+        if (val !== req.body.passwordConfirmation) throw new Error('Password confirmation is incorrect');
+        return true
+    }),
+]
 
 export default {
+    resetPass,
     loginSchema,
     createUser,
     updateUser,

@@ -18,7 +18,10 @@ export class UserRoutes extends Middlewares {
         app.route('/user/code-verification')
             .post(valid.codeVerification, this.valid, this.Auth, this.userController.codeVerify)
 
-        app.route('/user/forgot-password/:userId?')
+        app.route('/user/forgot-password')
             .post(valid.forgotPassword, this.valid, this.userController.forgotPass)
+
+        app.route('/user/password-reset/:token')
+            .post(valid.resetPass, this.valid, this.userController.resetPass)
     }
 }

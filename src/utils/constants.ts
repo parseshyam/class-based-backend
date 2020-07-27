@@ -14,7 +14,9 @@ export const db = {
 export default {
     ACCESS_TOKEN: process.env.ACCESS_TOKEN,
     REFRESH_TOKEN: process.env.REFRESH_TOKEN,
+    PASS_TOKEN: process.env.PASS_TOKEN,
+    PASS_EXP: '1d',
     TYPE: 'Bearer',
     ACCESS_EXP: '10d',
-    REFRESH_EXP: '1d',
+    REFRESH_EXP: '30d',
 }

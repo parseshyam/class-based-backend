@@ -2,7 +2,8 @@ import { Request, Response, NextFunction } from 'express';
 import { Responses } from '../utils/Responses';
 import { User } from '../models/user.model';
 import { hash, compare } from 'bcrypt'
-import { generate_tokens } from '../utils/helper.functions';
+import { generate_tokens, forgotPassToken, verifyToken } from '../utils/helper.functions';
+
 export class UserController extends Responses {
 
     public createUser = async (req: Request, res: Response, next: NextFunction) => {
@@ -14,7 +15,7 @@ export class UserController extends Responses {
                 else {
                     delete foundUser.dataValues.password;
                     delete foundUser.dataValues.socket_id;
-                    let tokens = generate_tokens(foundUser.dataValues);
+                    let tokens = await generate_tokens(foundUser.dataValues);
                     return this.success(res, { user: foundUser, auth: tokens }, "", 200);
                 }
             }
@@ -26,7 +27,7 @@ export class UserController extends Responses {
             });
             delete user.dataValues.password;
             delete user.dataValues.socket_id;
-            let tokens = generate_tokens(user.dataValues);
+            let tokens = await generate_tokens(user.dataValues);
             return this.success(res, { user, auth: tokens }, "", 200);
         } catch (error) {
             return next(error);
@@ -82,14 +83,15 @@ export class UserController extends Responses {
             if (!foundUser) return this.failed(res, {}, "user not found");
             let checkPass = await compare(password, foundUser.dataValues.password);
             if (!checkPass) return this.failed(res, {}, "wrong password", 200);
-            if (foundUser.dataValues.two_step_auth) {
-                let verify_code = Math.floor(10000 + Math.random() * 90000);
-                return this.success(res, { verify: true, code: verify_code }, "user found");
-            }
             delete foundUser.dataValues.password;
             delete foundUser.dataValues.socket_id;
             delete foundUser.dataValues.verify_code;
-            return this.success(res, { verify: false, code: null }, "user found");
+            let tokens = await generate_tokens(foundUser.dataValues);
+            if (foundUser.dataValues.two_step_auth) {
+                let verify_code = Math.floor(10000 + Math.random() * 90000);
+                return this.success(res, { verify: true, code: verify_code, auth: tokens }, "user found");
+            }
+            return this.success(res, { verify: false, code: null, auth: tokens }, "user found");
         } catch (error) {
             return next(error)
         }
@@ -104,8 +106,24 @@ export class UserController extends Responses {
             let verify_code = Math.floor(10000 + Math.random() * 90000);
             delete foundUser.dataValues.password;
             delete foundUser.dataValues.socket_id;
-            return this.success(res, { verify: true, code: verify_code }, "user found");
+            let token = forgotPassToken(foundUser.dataValues);
+            return this.success(res, { verify: true, code: verify_code, token }, "user found");
         } catch (error) {
+            return next(error)
+        }
+    }
+
+    public resetPass = async (req: Request, res: Response, next: NextFunction) => {
+        let { token } = req.params;
+        let { password } = req.body;
+        try {
+            let result: any = await verifyToken(token);
+            if (!result) return this.failed(res)
+            let hashedPass = await hash(password, 10);
+            await User.update({ password: hashedPass }, { where: { id: result.id } })
+            return this.success(res, {}, "user found");
+        } catch (error) {
+            error.statusCode = 401
             return next(error)
         }
     }
