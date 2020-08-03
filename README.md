@@ -1,15 +1,29 @@
+# README #
 
-# BACKEND API BOILERPLATE
-> A curated list of awesome READMEs
+This README would normally document whatever steps are necessary to get your application up and running.
 
-#### This Repository is based on class based paradigm for backend API.
-- Equipped with typescript support.
-- Added middlewares for validations and authorization via [json-webtoken](https://www.npmjs.com/package/jsonwebtoken).
-- Added logger service using [wingston](https://www.npmjs.com/package/winston)
-- Added minimal sockets support via [socket-io](https://www.npmjs.com/package/socket.io)
+### What is this repository for? ###
 
-## MAJOR PACKAGES USED.
+* Quick summary
+* Version
+* [Learn Markdown](https://bitbucket.org/tutorials/markdowndemo)
 
-- [express-js](https://www.npmjs.com/package/express) - Fast, unopinionated, minimalist web framework for Node.js
-- [sequelize](https://www.npmjs.com/package/sequelize) -  promise-based Node.js ORM for Postgres, MySQL, MariaDB, SQLite and Microsoft SQL Server. It features solid transaction support, relations, eager and lazy loading, read replication and more. Sequelize follows Semantic Versioning.
-- [express-validator](https://www.npmjs.com/package/express-validator) - express-validator is a set of express.js middlewares that wraps validator.js validator and sanitizer 
+### How do I get set up? ###
+
+* Summary of set up
+* Configuration
+* Dependencies
+* Database configuration
+* How to run tests
+* Deployment instructions
+
+### Contribution guidelines ###
+
+* Writing tests
+* Code review
+* Other guidelines
+
+### Who do I talk to? ###
+
+* Repo owner or admin
+* Other community or team contact

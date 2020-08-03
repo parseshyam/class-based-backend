@@ -1,45 +1,55 @@
-import * as express from 'express';
+import express, { Application, Request, Response, NextFunction } from 'express';
+import helmet from 'helmet';
 import cors from 'cors';
-import { UserRoutes } from './routes/user.routes';
-import { sequelize } from './configs/db.config'
-import logger from './services/logger';
+import morgan from 'morgan';
+import { sequelize } from './configs/db.config';
+import logger from './services/logger.service';
+import { UserRoutes } from './routes/user.route';
+import { ProfileRoutes } from './routes/profile.route'
+import { StaticRoutes } from './routes/static.routes'
+import { DiaryRoutes } from './routes/diary.route'
 class App {
-    public app: express.Application;
-    // all the routes goes here
+
+    public app: Application;
+    public static : StaticRoutes = new StaticRoutes();
     public user: UserRoutes = new UserRoutes();
-    // initilize express app with prerequsite
+    public profile: ProfileRoutes = new ProfileRoutes();
+    public diary: DiaryRoutes = new DiaryRoutes();
     constructor() {
-        this.app = express.default();
-        this.initializeDB();
-        this.initilizeMiddleware();
+        this.app = express();
+        this.initilizeDB();
+        this.initilizeMiddlewares();
+        this.static.routes(this.app);
         this.user.routes(this.app);
-        this.errorHandler();
+        this.profile.routes(this.app);
+        this.diary.routes(this.app);
+        this.initilizeErrorHandler();
     }
-    // initilize all the middlewares.
-    private initilizeMiddleware = () => {
+
+    private initilizeDB = () => {
+        import('./models')
+            .then(_ => sequelize.authenticate())
+            // .then(_ => sequelize.sync({ force: false })) //--> WILL CLEAR THE WHOLE DATABSE.
+            .then(_ => logger.info(`connected to database.`))
+            .catch(e => console.error(e));
+    }
+
+    private initilizeMiddlewares = () => {
         this.app.use(express.json());
         this.app.use(express.urlencoded({ extended: false }));
-        this.app.use(cors())
+        this.app.use(cors());
+        this.app.use(helmet());
+        this.app.use(morgan("dev"));
     }
-    // initilize the db instance
-    private initializeDB = async () => {
-        import('./models')
-            // .then(_ => sequelize.sync({ force: false }))
-            .then(_ => sequelize.authenticate())
-            .then(_ => logger.info('DB Connected successfully.'))
-            .catch(error => logger.error(error.message))
-    }
-    // initilize centeralized error handler for db and express errors.
-    private errorHandler = () => {
-        // error handler for undefined routes
-        this.app.use((req, res, next) => {
+
+    private initilizeErrorHandler = () => {
+        this.app.use((req: Request, res: Response, next: NextFunction) => {
             const error: any = new Error(`${req.originalUrl} not found.`);
             error.statusCode = 404;
             error.data = {}
             next(error);
         });
-        // error handler to catch all db and validations errors
-        this.app.use((error: any, req: any, res: any, next: any) => {
+        this.app.use((error: any, req: Request, res: Response, next: NextFunction) => {
             if (error?.original) {
                 error.message = error.original?.detail || error.original?.routine || "db error.";
                 error.data = error?.errors?.length > 0 ? error.errors.filter((e: any) => delete e.instance) : []

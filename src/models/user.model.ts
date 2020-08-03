@@ -1,5 +1,6 @@
-import { STRING, TEXT, BIGINT, BOOLEAN, INTEGER, ARRAY, ENUM } from 'sequelize'
-import { sequelize } from '../configs/db.config'
+import { STRING, BOOLEAN, INTEGER } from 'sequelize'
+import { sequelize } from '../configs/db.config';
+
 export const User = sequelize.define('user', {
     first_name: {
         type: STRING,
@@ -7,16 +8,16 @@ export const User = sequelize.define('user', {
     },
     last_name: {
         type: STRING,
-        allowNull: false
+        allowNull: true
     },
     email: {
         type: STRING,
         unique: true,
-        allowNull: false,
+        allowNull: true,
     },
     user_name: {
         type: STRING,
-        allowNull: false
+        allowNull: true
     },
     password: {
         type: STRING,
@@ -33,6 +34,10 @@ export const User = sequelize.define('user', {
     two_step_auth: {
         type: BOOLEAN,
         defaultValue: true
+    },
+    verified_email: {
+        type: BOOLEAN,
+        defaultValue: false
     }
 }, {
 

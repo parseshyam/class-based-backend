@@ -1,5 +1,5 @@
 import { Sequelize } from 'sequelize';
-import { db } from '../utils/constants';
+import { db } from './keys';
 
 export const sequelize = new Sequelize(db.DB_NAME, db.DB_USER_NAME, db.DB_PASSWORD, {
     host: db.DB_HOST_NAME,
@@ -8,6 +8,10 @@ export const sequelize = new Sequelize(db.DB_NAME, db.DB_USER_NAME, db.DB_PASSWO
     dialectOptions: {
         useUTC: false
     },
+    query: {
+        raw: true
+    },
     timezone: db.TIME_ZONE
 });
+
 

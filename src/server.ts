@@ -1,11 +1,9 @@
-import app from './app'
-import IO from 'socket.io';
-import logger from './services/logger';
-import { config } from 'dotenv';
 import { socketInit } from './services/socket.service';
-config();
+import app from './app'
+import socketIO from 'socket.io';
+import { PORT } from './configs/keys';
+import logger from './services/logger.service';
 
-let PORT = process.env.PORT || 7000;
 let server = app.listen(PORT, () => logger.info(`Http server is up and running on port -> ${PORT}`));
-export const io = IO(server);
+export const io = socketIO(server);
 socketInit(io, PORT);
